@@ -5,19 +5,34 @@ import (
 	"sync"
 	//"github.com/robfig/cron/v3"
 )
-const Count = iota
+//const Count = iota
 var parllel chan int = make(chan int,20)
 func main(){
-	test()
-	// for p := range 100 {
-	// 	parllel <- p
-	// 	go Init() //竞争抢占parllel
-	// }
-	// close(parllel)
+	// test()
+	var wg sync.WaitGroup
+	for range 20 {
+		
+		wg.Go(func(){
+			Init()	
+		})
+		
+		//go Init() //竞争抢占parllel
+	}
+	//往通道里发送100个任务
+	for task := range 100 {
+		parllel <- task
+	}
+	
+	close(parllel)
+	wg.Wait() //blocks until the WaitGroup task counter is zero.
 
 }
 
 func Init(){
+
+	for r := range parllel {
+		log.Printf("Init function executed: %d",r)
+	}
 	// log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// log.SetPrefix("[cron] :")
 	// loc, _ := time.LoadLocation("Asia/Shanghai")
@@ -36,10 +51,10 @@ func Init(){
 	// c.Start()
 	// select {} // Keep the main goroutine alive
 
-	for task := range parllel {
-		log.Printf("this is the %d", task)
-		
-	}
+	// for task := range parllel {
+	// 	log.Printf("this is the %d", task)
+	// }
+	
 }
 
 func test(){
