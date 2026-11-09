@@ -1,6 +1,7 @@
 package main
 import (
 	"log"
+	"os"
 	"encoding/json"
 	"github.com/go-resty/resty/v2"
 )
@@ -17,6 +18,7 @@ func MyTask(){
 	var count int = 0;
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.SetPrefix("[Task] :")
+	log.SetOutput(os.Stdout)
 	client := resty.New()
 	resp,err := client.R().SetHeaders(map[string]string{
 		"Content-Type":"application/x-www-form-urlencoded",
