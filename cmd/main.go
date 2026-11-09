@@ -1,17 +1,27 @@
 package main
 import (
-	//"time"
+	"time"
 	"log"
 	"sync"
-	//"github.com/robfig/cron/v3"
+	"github.com/robfig/cron/v3"
 )
 //const Count = iota
 var parllel chan int = make(chan int,20)
+
 func main(){
-	// test()
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetPrefix("[cron] :")
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	c := cron.New(cron.WithSeconds(),cron.WithLocation(loc))
+	c.AddFunc("* * * * * *",func(){
+		Task()
+	})
+	c.Start()
+	select{}
+}
+func Task(){
 	var wg sync.WaitGroup
-	for range 20 {
-		
+	for range 3 {
 		wg.Go(func(){
 			Init()	
 		})
@@ -23,40 +33,17 @@ func main(){
 		parllel <- task
 	}
 	
-	close(parllel)
-	wg.Wait() //blocks until the WaitGroup task counter is zero.
-
+	//close(parllel)
+	//wg.Wait() //blocks until the WaitGroup task counter is zero.
 }
-
 func Init(){
-
-	for r := range parllel {
-		log.Printf("Init function executed: %d",r)
-	}
-	// log.SetFlags(log.LstdFlags | log.Lshortfile)
-	// log.SetPrefix("[cron] :")
-	// loc, _ := time.LoadLocation("Asia/Shanghai")
-	// c := cron.New(cron.WithSeconds(),cron.WithLocation(loc))
-	// var count int = 0;
-	// var p int = <-parllel
-	// log.Printf("this is the %d", p)
-	// jid, err := c.AddFunc("* * * * * *", func() {
-	// 	count++
-	// 	log.Println("Running scheduled task",count)
-	// })
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Println("Scheduled job ID:", jid)
-	// c.Start()
-	// select {} // Keep the main goroutine alive
-
-	// for task := range parllel {
-	// 	log.Printf("this is the %d", task)
-	// }
 	
+	//loc, _ := time.LoadLocation("Asia/Shanghai")
+	for r := range parllel {
+		MyTask()
+		log.Printf("[Worker %d] 收到并处理任务: %d", r, r)
+	}
 }
-
 func test(){
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	
