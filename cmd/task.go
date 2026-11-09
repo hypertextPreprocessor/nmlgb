@@ -11,14 +11,15 @@ type AuthSuccess struct {
 	Data []any	`json:"data"`
 	Msg	string	`json:"msg"`
 }
+var taskLogger = log.New(os.Stdout, "[Task] :", log.LstdFlags|log.Lshortfile)
 // func main(){
 // 	MyTask()
 // }
 func MyTask(){
 	var count int = 0;
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	log.SetPrefix("[Task] :")
-	log.SetOutput(os.Stdout)
+	// taskLogger.SetFlags(log.LstdFlags | log.Lshortfile)
+	// taskLogger.SetPrefix("[Task] :")
+	// taskLogger.SetOutput(os.Stdout)
 	client := resty.New()
 	resp,err := client.R().SetHeaders(map[string]string{
 		"Content-Type":"application/x-www-form-urlencoded",
@@ -32,7 +33,7 @@ func MyTask(){
 		// 直接断言成你的结构体指针
 		authResult := resp.Result().(*AuthSuccess)
 		count ++;
-		log.Printf("执行了%d次,执行code结果：%d,msg显示:%s",count,authResult.Code,authResult.Msg)
+		taskLogger.Printf("执行了%d次,执行code结果：%d,msg显示:%s",count,authResult.Code,authResult.Msg)
 	}
 }
 func parseResponse(resp *resty.Response) (*AuthSuccess, error) {
