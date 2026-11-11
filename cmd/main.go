@@ -1,10 +1,11 @@
 package main
 import (
-	"time"
+	//"time"
 	"log"
 	"sync"
 	"os"
-	"github.com/robfig/cron/v3"
+	"nmlgb/cmd/task"
+	//"github.com/robfig/cron/v3"
 )
 //const Count = iota
 var parllel chan int = make(chan int,20)
@@ -13,13 +14,16 @@ func main(){
 	// cronLogger.SetFlags(log.LstdFlags | log.Lshortfile)
 	// cronLogger.SetPrefix("[cron] :")
 	// cronLogger.SetOutput(os.Stdout)
-	loc, _ := time.LoadLocation("Asia/Shanghai")
-	c := cron.New(cron.WithSeconds(),cron.WithLocation(loc))
-	c.AddFunc("* * * * * *",func(){
-		Task()
-	})
-	c.Start()
-	select{}
+	
+	token := task.GenToken()
+	cronLogger.Printf("my token is: %s",token)
+	// loc, _ := time.LoadLocation("Asia/Shanghai")
+	// c := cron.New(cron.WithSeconds(),cron.WithLocation(loc))
+	// c.AddFunc("* * * * * *",func(){
+	// 	Task()
+	// })
+	// c.Start()
+	// select{}
 }
 func Task(){
 	var wg sync.WaitGroup

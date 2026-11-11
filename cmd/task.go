@@ -35,6 +35,20 @@ func MyTask(){
 		count ++;
 		taskLogger.Printf("执行了%d次,执行code结果：%d,msg显示:%s",count,authResult.Code,authResult.Msg)
 	}
+
+	resp1,err1 := client.R().SetHeaders(map[string]string{
+		"Content-Type":"application/x-www-form-urlencoded",
+		"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+		"Token":"hRYASwMhrkciKGFhzbHA3sCw7684n4Xb",
+	}).
+	SetBody([]byte("apply_type=1&contact_name=%E8%8D%89%E6%B3%A5%E9%A9%AC&contact_phone=13820403309&company_name=%E8%8D%89%E6%B3%A5%E9%A9%AC%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8&cooperation_intent=%E8%8D%89%E6%B3%A5%E9%A9%AC%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8%E6%98%AF%E4%B8%80%E5%AE%B6%E4%B8%93%E6%B3%A8%E4%BA%8E%E8%8D%89%E6%B3%A5%E9%A9%AC%E7%9A%84%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8%E3%80%82")).
+	SetResult(&AuthSuccess{}).
+	Post("https://mapi.txlh16.cn/api/businesscooperation/submit")
+	
+	if err1 == nil && resp1.IsSuccess(){
+		resResult := resp1.Result().(*AuthSuccess)
+		taskLogger.Printf("执行code结果：%d,msg显示:%s",resResult.Code,resResult.Msg)
+	}
 }
 func parseResponse(resp *resty.Response) (*AuthSuccess, error) {
 	// 1. 获取 []byte 类型的响应体
